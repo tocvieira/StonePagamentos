@@ -68,7 +68,8 @@ def get_prevision(tree):
 
 def main():
     """ Main Functional"""
-    report_date = "20171026" #date.today() - timedelta(1)
+    report_date = input("Informe a data desejada (Exemplo: 20171026): ")
+    #report_date = "20171026" #date.today() - timedelta(1)
     tree = fromstring(get_stone_report(report_date))
 
     gross_amount = get_gross_amount(tree)
