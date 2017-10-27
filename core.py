@@ -59,7 +59,9 @@ def get_prevision(tree):
                     v_net_amount = k.find('NetAmount')
                     v_prevision_date = k.find('PrevisionPaymentDate')
                     l_net_amount.append(float(v_net_amount.text))
-                    l_prevision_date.append(int(v_prevision_date.text))
+                    date = v_prevision_date.text
+                    date = date[6:8] + "/" + date[4:6] + "/" + date[0:4]
+                    l_prevision_date.append(date)
     r = list(zip(l_prevision_date, l_net_amount))
     d = defaultdict(list)
     for k, v in r:
