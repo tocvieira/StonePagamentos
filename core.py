@@ -13,12 +13,10 @@ def get_autorization():
     autorization = config.get('configuration', 'authorization')
     return autorization
 
-def get_stone_report():
+def get_stone_report(report_date):
     """ Get Stone XML """
 
-    today = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d')
-    yesterday = date.today() - timedelta(1)
-    url = 'https://conciliation.stone.com.br/conciliation-file/v2/{}'.format(yesterday.strftime('%Y%m%d'))
+    url = 'https://conciliation.stone.com.br/conciliation-file/v2/{}'.format(report_date) #report_date.strftime('%Y%m%d'))
     headers = {
         "Authorization":get_autorization(),
         # "Accept-Encoding": "gzip"
@@ -70,7 +68,8 @@ def get_prevision(tree):
 
 def main():
     """ Main Functional"""
-    tree = fromstring(get_stone_report())
+    report_date = "20171026" #date.today() - timedelta(1)
+    tree = fromstring(get_stone_report(report_date))
 
     gross_amount = get_gross_amount(tree)
     net_amount = get_net_amount(tree)
