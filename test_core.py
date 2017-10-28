@@ -12,8 +12,20 @@ class StoneTest(unittest.TestCase):
         self.assertEqual(hexrhash,defaulth)
 
     def test_get_gross_amount(self):
-        pass
+        report = fromstring(get_stone_report("20171026"))
+        self.assertEqual(get_gross_amount(report), 2501.0)
+
+    def test_get_net_amount(self):
+        report = fromstring(get_stone_report("20171026"))
+        self.assertEqual(get_net_amount(report), 2426.3579999999997)
+
+    def test_get_prevision(self):
+        report = fromstring(get_stone_report("20171026"))
+        prevision_date = len(builtins.dict(get_prevision(report)))
+        self.assertEqual(prevision_date, 5)
+
 
 if __name__ == '__main__':
     unittest.main()
+
 
