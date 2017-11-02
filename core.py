@@ -1,10 +1,13 @@
 from xml.etree.ElementTree import fromstring
 from collections import defaultdict
 import builtins
-# import datetime
+import sqlite3
 import requests
 import configparser
-from datetime import date, timedelta
+import os
+
+# import datetime
+#from datetime import date, timedelta
 
 def get_autorization():
     """ Get Stone Token"""
@@ -66,8 +69,46 @@ def get_prevision(tree):
         d[k].append(v)
     return (d)
 
+def table_create():
+    #check if database exists if not create it.
+
+    if os.path.exists("DataStone.db"):
+        return None
+
+    #connect database
+    database = sqlite3.connect("DataStone.db")
+
+    #cursor object
+    cursor = database.cursor()
+
+    #Create Table
+
+    cursor.execute(""" 
+    CREATE TABLE DataStone (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            report_date DATE NOT NULL,
+            date DATE NOT NULL,
+            value FLOAT
+    );
+    """)
+
+    print("Tabela Criada com Sucesso")
+
+    database.close()
+
+def insert_data(report_date, date, value):
+    """ Insert data in DataStone.db """
+    conn = sqlite3.connect('DataStone.db')
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO DataStone (report_date, date, value) VALUES (?, ?, ?)", (report_date, date, value))
+    conn.commit()
+    conn.close()
+
 def main():
     """ Main Functional"""
+
+    table_create()
+
     report_date = input("Informe a data desejada (Exemplo: 20171026): ")
     #report_date = "20171026" #date.today() - timedelta(1)
     tree = fromstring(get_stone_report(report_date))
@@ -83,6 +124,8 @@ def main():
     print("Os valores líquidos serão repassados com a seguinte previsão:")
     for x, k in prevision.items():
         print("Data: {} Valor: R$ {:.02f}".format(x, sum(k)))
+        insert_data(report_date, x, sum(k))
+
 
 if __name__ == '__main__':
     main()
