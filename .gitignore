@@ -6,3 +6,6 @@
 /sandbox.py
 /bs4_core.py
 /learning.md
+/DataStone.db
+/__pycache__/
+/database_creator.py
