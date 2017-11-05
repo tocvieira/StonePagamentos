@@ -8,27 +8,36 @@ import os
 from datetime import date, timedelta, datetime
 
 
-
 def get_autorization():
-    """ Get Stone Token"""
+    """
+    Get Stone Token
+    """
+
     config = configparser.ConfigParser()
     config.read('config.txt', encoding="utf-8")
     autorization = config.get('configuration', 'authorization')
+
     return autorization
 
 def get_stone_report(report_date):
-    """ Get Stone XML """
+    """
+    Get Stone XML
+    """
 
-    url = 'https://conciliation.stone.com.br/conciliation-file/v2/{}'.format(report_date) #report_date.strftime('%Y%m%d'))
+    url = 'https://conciliation.stone.com.br/conciliation-file/v2/{}'.format(report_date)
     headers = {
         "Authorization":get_autorization(),
         # "Accept-Encoding": "gzip"
     }
     r = requests.get(url, headers=headers)
+
     return r.text
 
 def get_gross_amount(tree):
-    """ Parse Gross Amount """
+    """
+    Parse Gross Amount
+    """
+
     r = []
     for item in tree.findall("FinancialTransactions"):
         for x in item.findall('Transaction'):
@@ -36,10 +45,13 @@ def get_gross_amount(tree):
                 for k in y.findall('Installment'):
                     bruto = k.find('GrossAmount')
                     r.append(float(bruto.text))
+
     return (sum(r))
 
 def get_net_amount(tree):
+
     """ Parse Net Amount """
+
     r = []
     for item in tree.findall("FinancialTransactions"):
         for x in item.findall('Transaction'):
@@ -47,10 +59,14 @@ def get_net_amount(tree):
                 for k in y.findall('Installment'):
                     bruto = k.find('NetAmount')
                     r.append(float(bruto.text))
+
     return (sum(r))
 
 def get_prevision(tree):
-    """ Paser Prevision Dates """
+    """
+    Paser Prevision Dates
+    """
+
     l_net_amount = []
     l_prevision_date = []
     for item in tree.findall("FinancialTransactions"):
@@ -67,10 +83,13 @@ def get_prevision(tree):
     d = defaultdict(list)
     for k, v in r:
         d[k].append(v)
+
     return (d)
 
 def table_create():
-    #check if database exists if not create it.
+    """
+    Check if database exists if not create it.
+    """
 
     if os.path.exists("DataStone.db"):
         return None
@@ -94,30 +113,42 @@ def table_create():
 
     print("ATENÇÃO - Um novo banco de dados foi criado")
 
+    cursor.close()
     database.close()
 
 def insert_data(report_date, date, value):
-    """ Insert data in DataStone.db """
+    """
+    Insert data in DataStone.db
+    """
+
     conn = sqlite3.connect('DataStone.db')
     cursor = conn.cursor()
     cursor.execute("INSERT INTO DataStone (report_date, date, value) VALUES (?, ?, ?)",
                    (report_date, date, value))
     conn.commit()
+    cursor.close()
     conn.close()
 
 def get_archive_report_date():
+    """
+    Get the dates of the archived reports.
+    """
+
     conn = sqlite3.connect('DataStone.db')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM DataStone')
 
     rows = cursor.fetchall()
     archive_report = ([row[1] for row in rows])
+    cursor.close()
     conn.close()
 
     return archive_report
 
 def main():
-    """ Main Functional"""
+    """
+    Main Functional
+    """
 
     table_create()
 
@@ -125,7 +156,6 @@ def main():
     end_date = datetime.strptime(input("Informe a data final: "), '%Y%m%d')
 
     delta = end_date - start_date
-    print(range(delta.days +1))
 
     for y in range(delta.days + 1):
         report_date = start_date + timedelta(days=y)
