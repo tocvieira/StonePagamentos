@@ -3,7 +3,7 @@
 ![Stone API](https://img.shields.io/badge/Stone%20API-1.1-brightgreen.svg)
 ![License](https://img.shields.io/badge/License-GPL%203-brightgreen.svg)
 
-Script written in Python 3 to get sales reports and receivables behind the Stone API <https://www.stone.com.br/>.
+Script written in Python 3 to get sales and receivables reports using the Stone API.
 
 
 
