@@ -14,3 +14,6 @@ Script written in Python 3 to get sales reports and receivables behind the Stone
 ## API Documentation
 
 http://conciliacao.stone.com.br/v1.1/docs 
+
+## Road MAP
+- Integrate with GnuCash
